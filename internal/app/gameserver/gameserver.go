@@ -2,9 +2,11 @@ package gameserver
 
 import (
 	"fmt"
+	"net/http"
+
+	"github.com/JohnNON/gamewithnums/internal/app/store"
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
-	"net/http"
 )
 
 // GameServer - структура, хранящая сервер и его настройки
@@ -12,6 +14,7 @@ type GameServer struct {
 	config *Config
 	logger *logrus.Logger
 	router *mux.Router
+	store  *store.Store
 }
 
 // New - функция для инициализации GameServer
@@ -30,6 +33,10 @@ func (s *GameServer) Start() error {
 	}
 
 	s.configRouter()
+
+	if err := s.configStore(); err != nil {
+		return err
+	}
 
 	s.logger.Info("starting game server")
 
@@ -51,6 +58,16 @@ func (s *GameServer) configLogger() error {
 
 func (s *GameServer) configRouter() {
 	s.router.HandleFunc("/", s.handleHello())
+}
+
+func (s *GameServer) configStore() error {
+	st := store.New(s.config.Store)
+	if err := st.Open(); err != nil {
+		return err
+	}
+
+	s.store = st
+	return nil
 }
 
 func (s *GameServer) handleHello() http.HandlerFunc {

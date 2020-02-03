@@ -2,10 +2,10 @@ package main
 
 import (
 	"flag"
-	"github.com/BurntSushi/toml"
-	"github.com/JohnNON/gamewithnums/internal/gameserver"
-
 	"log"
+
+	"github.com/BurntSushi/toml"
+	"github.com/JohnNON/gamewithnums/internal/app/gameserver"
 )
 
 var (
