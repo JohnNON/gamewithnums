@@ -25,8 +25,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	server := gameserver.New(config)
-	if err := server.Start(); err != nil {
+	if err := gameserver.Start(config); err != nil {
 		log.Fatal(err)
 	}
 }

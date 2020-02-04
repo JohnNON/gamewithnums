@@ -1,7 +1,10 @@
-package store
+package sqlstore
 
 import (
+	"database/sql"
+
 	"github.com/JohnNON/gamewithnums/internal/app/model"
+	"github.com/JohnNON/gamewithnums/internal/app/store"
 )
 
 // UserRepository - способ хранения user
@@ -10,23 +13,20 @@ type UserRepository struct {
 }
 
 // Create - создаст место хранения user
-func (r *UserRepository) Create(u *model.User) (*model.User, error) {
-	if err := u.Validate(); err != nil [
-		return nil, err
-	]
-
-	if err := u.BeforeCreate(); err != nil {
-		return nil, err
+func (r *UserRepository) Create(u *model.User) error {
+	if err := u.Validate(); err != nil {
+		return err
 	}
 
-	if err := r.store.db.QueryRow(
+	if err := u.BeforeCreate(); err != nil {
+		return err
+	}
+
+	return r.store.db.QueryRow(
 		"INSERT INTO users (email, encrypted_password) VALUES ($1, $2) RETURNING id",
 		u.Email,
 		u.EncryptedPassword,
-	).Scan(&u.ID); err != nil {
-		return nil, err
-	}
-	return u, nil
+	).Scan(&u.ID)
 }
 
 // FindByEmail - ищет user по значению поля email
@@ -40,6 +40,9 @@ func (r *UserRepository) FindByEmail(email string) (*model.User, error) {
 		&u.Email,
 		&u.EncryptedPassword,
 	); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, store.ErrRecordNotFound
+		}
 		return nil, err
 	}
 

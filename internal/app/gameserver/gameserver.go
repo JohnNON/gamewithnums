@@ -1,77 +1,35 @@
 package gameserver
 
 import (
-	"fmt"
 	"net/http"
 
-	"github.com/JohnNON/gamewithnums/internal/app/store"
-	"github.com/gorilla/mux"
-	"github.com/sirupsen/logrus"
+	"github.com/JohnNON/gamewithnums/internal/app/store/sqlstore"
+	"github.com/jmoiron/sqlx"
 )
 
-// GameServer - структура, хранящая сервер и его настройки
-type GameServer struct {
-	config *Config
-	logger *logrus.Logger
-	router *mux.Router
-	store  *store.Store
-}
-
-// New - функция для инициализации GameServer
-func New(config *Config) *GameServer {
-	return &GameServer{
-		config: config,
-		logger: logrus.New(),
-		router: mux.NewRouter(),
-	}
-}
-
-// Start - осуществляет запуск сервера
-func (s *GameServer) Start() error {
-	if err := s.configLogger(); err != nil {
-		return err
-	}
-
-	s.configRouter()
-
-	if err := s.configStore(); err != nil {
-		return err
-	}
-
-	s.logger.Info("starting game server")
-
-	return http.ListenAndServe(s.config.BindAddr, s.router)
-}
-
-// configLogger - конфигурирует логгер
-func (s *GameServer) configLogger() error {
-	level, err := logrus.ParseLevel(s.config.LogLevel)
-
+// Start - выполняет запуск сервера
+func Start(config *Config) error {
+	db, err := newDB(config.DatabaseDriver, config.DatabaseURL)
 	if err != nil {
 		return err
 	}
 
-	s.logger.SetLevel(level)
+	defer db.Close()
+	store := sqlstore.New(db)
+	srv := newServer(store)
 
-	return nil
+	return http.ListenAndServe(config.BindAddr, srv)
 }
 
-func (s *GameServer) configRouter() {
-	s.router.HandleFunc("/", s.handleHello())
-}
-
-func (s *GameServer) configStore() error {
-	st := store.New(s.config.Store)
-	if err := st.Open(); err != nil {
-		return err
+func newDB(databaseDriver, databaseURL string) (*sqlx.DB, error) {
+	db, err := sqlx.Open(databaseDriver, databaseURL)
+	if err != nil {
+		return nil, err
 	}
 
-	s.store = st
-	return nil
-}
-
-func (s *GameServer) handleHello() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, "Hello!")
+	if err := db.Ping(); err != nil {
+		return nil, err
 	}
+
+	return db, nil
 }
