@@ -6,7 +6,10 @@ require (
 	github.com/BurntSushi/toml v0.3.1
 	github.com/go-ozzo/ozzo-validation/v4 v4.0.0
 	github.com/golang-migrate/migrate v3.5.4+incompatible // indirect
+	github.com/google/uuid v1.1.1
+	github.com/gorilla/handlers v1.4.2
 	github.com/gorilla/mux v1.7.3
+	github.com/gorilla/securecookie v1.1.1
 	github.com/gorilla/sessions v1.2.0
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/lib/pq v1.3.0
