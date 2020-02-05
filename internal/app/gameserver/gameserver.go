@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/JohnNON/gamewithnums/internal/app/store/sqlstore"
+	"github.com/gorilla/sessions"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -16,7 +17,8 @@ func Start(config *Config) error {
 
 	defer db.Close()
 	store := sqlstore.New(db)
-	srv := newServer(store)
+	sessionStore := sessions.NewCookieStore([]byte(config.SessionKey))
+	srv := newServer(store, sessionStore)
 
 	return http.ListenAndServe(config.BindAddr, srv)
 }

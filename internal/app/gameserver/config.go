@@ -6,6 +6,7 @@ type Config struct {
 	LogLevel       string `toml:"log_level"`
 	DatabaseURL    string `toml:"database_url"`
 	DatabaseDriver string `toml:"database_driver"`
+	SessionKey     string `toml:"session_key"`
 }
 
 // NewConfig - инициализация конфига по умолчанию

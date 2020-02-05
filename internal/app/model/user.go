@@ -8,10 +8,10 @@ import (
 
 // User - описание модели пользователя
 type User struct {
-	ID                int
-	Email             string
-	Password          string
-	EncryptedPassword string
+	ID                int    `json:"id"`
+	Email             string `json:"email"`
+	Password          string `json:"password,omitempty"`
+	EncryptedPassword string `json:"-"`
 }
 
 // Validate - метод для валидации вводимых данных
@@ -35,6 +35,16 @@ func (u *User) BeforeCreate() error {
 	}
 
 	return nil
+}
+
+// Sanitize - очищает поля, которые являются приватными
+func (u *User) Sanitize() {
+	u.Password = ""
+}
+
+// ComparePassword - проверяет парольвведенный и хранимый на совпадение
+func (u *User) ComparePassword(password string) bool {
+	return bcrypt.CompareHashAndPassword([]byte(u.EncryptedPassword), []byte(password)) == nil
 }
 
 func encryptString(s string) (string, error) {

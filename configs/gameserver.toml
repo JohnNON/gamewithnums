@@ -1,2 +1,5 @@
 bind_addr = ":8080"
 log_level = "debug"
+database_url = "user=postgres dbname=gamewithnums sslmode=disable"
+database_driver = "postgres"
+session_key = "secret"
