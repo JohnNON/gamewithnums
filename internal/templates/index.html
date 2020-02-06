@@ -1,0 +1,27 @@
+{{ template "base" . }}
+{{ define "content" }}
+<a href="/login">Login</a>
+<a href="/register">Registration</a>
+{{ if .Users}}
+<table>
+    <thead>
+        <tr>
+            <th>Num</th>
+            <th>Name</th>
+            <th>Pass</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{ range $i, $u := .Users }}
+        <tr>
+            <td>{{ add $i 1 }}</td>
+            <td>{{ $u.Email }}</td>
+            <td>{{ $u.Password }}</td>
+        </tr>
+        {{ end }}
+    </tbody>
+</table>
+{{ else }}
+    <p>Nothing</p>
+{{ end }}
+{{ end }}

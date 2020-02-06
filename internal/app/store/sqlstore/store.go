@@ -8,8 +8,9 @@ import (
 
 // Store - структура описывающее хранилище
 type Store struct {
-	db             *sqlx.DB
-	userRepository *UserRepository
+	db               *sqlx.DB
+	userRepository   *UserRepository
+	recordRepository *RecordRepository
 }
 
 // New - функция создающее новое хранилище
@@ -28,4 +29,15 @@ func (s *Store) User() store.UserRepository {
 	}
 
 	return s.userRepository
+}
+
+// Record - метод для работы с репозиторием record
+func (s *Store) Record() store.RecordRepository {
+	if s.recordRepository == nil {
+		s.recordRepository = &RecordRepository{
+			store: s,
+		}
+	}
+
+	return s.recordRepository
 }

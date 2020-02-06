@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"html/template"
 	"net/http"
 	"time"
 
@@ -26,6 +27,12 @@ var (
 	errIncorrectEmailOrPassword = errors.New("incorect email or password")
 	errNotAuthenticated         = errors.New("not authenticated")
 )
+
+var funcMap = template.FuncMap{
+	"add": func(a, b int) int {
+		return a + b
+	},
+}
 
 type ctxKey int8
 
@@ -58,12 +65,48 @@ func (s *server) configureRouter() {
 	s.router.Use(s.setRequestID)
 	s.router.Use(s.logRequest)
 	s.router.Use(handlers.CORS(handlers.AllowedOrigins([]string{"*"})))
+	s.router.HandleFunc("/index", s.handleIndexPage()).Methods("GET")
 	s.router.HandleFunc("/users", s.handleUsersCreate()).Methods("POST")
 	s.router.HandleFunc("/sessions", s.handleSessionsCreate()).Methods("POST")
 
 	private := s.router.PathPrefix("/private").Subrouter()
 	private.Use(s.authenticateUser)
 	private.HandleFunc("/whoami", s.handleWhoami()).Methods("GET")
+}
+
+func renderTemplate(s string) (*template.Template, error) {
+	return template.ParseFiles(s, "./internal/templates/head.html", "./internal/templates/scripts.html", "./internal/templates/base.html")
+}
+
+func renderFuncTemplate(s string) (*template.Template, error) {
+	tmpl := template.New(s)
+	tmpl.Funcs(funcMap)
+	return tmpl.ParseFiles(s, "./internal/templates/head.html", "./internal/templates/scripts.html", "./internal/templates/base.html")
+}
+
+func (s *server) handleIndexPage() http.HandlerFunc {
+	var templateIndex *template.Template
+	templateIndex = template.Must(renderFuncTemplate("./internal/templates/index.html"))
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		//u := r.Context().Value(ctxKeyUser).(*model.User)
+		rc, err := s.store.Record().GetAllRecords("1")
+		if err != nil {
+			s.error(w, r, http.StatusInternalServerError, err)
+			return
+		}
+		pageData := map[string]interface{}{
+			"Title":   "Greetings!",
+			"Records": *rc,
+		}
+
+		err = templateIndex.ExecuteTemplate(w, "base", pageData)
+		if err != nil {
+			s.error(w, r, http.StatusInternalServerError, err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+	}
 }
 
 func (s *server) handleUsersCreate() http.HandlerFunc {

@@ -7,7 +7,8 @@ import (
 
 // Store - структура описывающее хранилище
 type Store struct {
-	userRepository *UserRepository
+	userRepository   *UserRepository
+	recordRepository *RecordRepository
 }
 
 // New - функция создающее новое хранилище
@@ -25,4 +26,16 @@ func (s *Store) User() store.UserRepository {
 	}
 
 	return s.userRepository
+}
+
+// Record - метод для работы с репозиторием user
+func (s *Store) Record() store.RecordRepository {
+	if s.recordRepository == nil {
+		s.recordRepository = &RecordRepository{
+			store:   s,
+			records: make(map[int]*model.Record),
+		}
+	}
+
+	return s.recordRepository
 }
