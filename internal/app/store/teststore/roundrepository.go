@@ -49,3 +49,14 @@ func (r *RoundRepository) DeleteByUserID(userID string) error {
 	r.rounds = make(map[int]*model.Round)
 	return nil
 }
+
+// RoundCheck - проверяет есть ли записи с userID в тестовом хранилище
+func (r *RoundRepository) RoundCheck(userID int) bool {
+	for _, rn := range r.rounds {
+		if rn.UserID == userID {
+			return true
+		}
+	}
+
+	return false
+}

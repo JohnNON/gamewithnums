@@ -27,12 +27,12 @@ func (s *server) handleGameEndCheck() http.HandlerFunc {
 			return
 		}
 
-		game, ok := session.Values["user_game"]
-		if !ok || game == nil {
-			s.response(w, r, http.StatusOK, res)
-			return
+		id, ok := session.Values["user_id"]
+		if !ok || id == nil {
+			res.Val = false
+		} else {
+			res.Val = s.store.Round().RoundCheck(id.(int))
 		}
-		res.Val = true
 
 		w.Header().Set("X-CSRF-Token", csrf.Token(r))
 		s.response(w, r, http.StatusOK, res)

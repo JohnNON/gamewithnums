@@ -14,7 +14,7 @@ func TestMain(m *testing.M) {
 	databaseURL = os.Getenv("DATABASE_URL")
 	databaseDriver = os.Getenv("DATABASE_DRIVER")
 	if databaseURL == "" || databaseDriver == "" {
-		databaseURL = "user=postgres password=C0nf1cer dbname=gamewithnums_test sslmode=disable"
+		databaseURL = "user=postgres password=C0nf1cer dbname=gamewithnums sslmode=disable"
 		databaseDriver = "postgres"
 	}
 

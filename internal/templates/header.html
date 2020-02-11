@@ -3,14 +3,15 @@
 <header class="">
     <div class="container">
         <div class="nav">
-            <a href="/index">Records</a>
+            <a href="/index">Правила</a>
+            <a href="/records">Рекорды</a>
             {{ if .Login }}
-                <a href="/private/game">Game</a>
-                <a href="/private/statistic">Gamer's Statistic</a>
-                <a href="/logout">Logout</a>
+                <a href="/private/game">Играть</a>
+                <a href="/private/statistic">Статистика пользователя</a>
+                <a href="/logout">Выйти</a>
             {{ else }}
-                <a href="/login">Login</a>
-                <a href="/registration">Registration</a>
+                <a href="/login">Войти</a>
+                <a href="/registration">Регистрация</a>
             {{ end }}
         </div>
     </div>

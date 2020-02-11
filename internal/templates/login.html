@@ -3,21 +3,21 @@
 
 <main class="centered">
     <div class="nes-container with-title is-centered is-rounded">
-        <p class="title">Let's Game!</p>
+        <p class="title">Войти в игру</p>
 
         <div class="nes-container is-rounded">
 
             <form action="/login" method="POST">
                 {{ .csrfField }}
                 <div class="nes-field is-inline">
-                    <label for="warning_field">Email</label>
+                    <label for="warning_field">Почта</label>
                     <input type="email" name="email" class="nes-input">
                 </div>
                 <div class="nes-field is-inline">
-                    <label for="warning_field">Password</label>
+                    <label for="warning_field">Пароль</label>
                     <input type="password" name="password" class="nes-input">
                 </div>
-                <button type="submit" class="nes-btn is-primary">Submit</button>
+                <button type="submit" class="nes-btn is-primary">Войти</button>
             </form>
 
         </div>

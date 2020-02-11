@@ -77,7 +77,7 @@ func (s *server) handleIndexPage() http.HandlerFunc {
 	var templateIndexPage *template.Template
 	templateIndexPage = template.Must(renderFuncTemplate("./internal/templates/index.html"))
 
-	var rcEasy, rcMedium, rcHard *[]model.Record
+	var rcEasy, rcMedium, rcHard, rcPain, rcBrutal, rcEvol *[]model.Record
 	var err error
 	var wg sync.WaitGroup
 
@@ -99,6 +99,25 @@ func (s *server) handleIndexPage() http.HandlerFunc {
 			defer wg.Done()
 			rcHard, err = s.store.Record().GetAllRecords("12")
 		}()
+
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			rcPain, err = s.store.Record().GetAllRecords("32")
+		}()
+
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			rcBrutal, err = s.store.Record().GetAllRecords("64")
+		}()
+
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			rcEvol, err = s.store.Record().GetAllRecords("128")
+		}()
+
 		wg.Wait()
 
 		if err != nil {
@@ -109,8 +128,8 @@ func (s *server) handleIndexPage() http.HandlerFunc {
 		}
 
 		pageData := map[string]interface{}{
-			"Title":   "Games' Records!",
-			"Message": "Games' Records!",
+			"Title":   "Game with nums - Games' Records",
+			"Message": "Игровые рекорды",
 			"Records": struct{}{},
 		}
 
@@ -130,7 +149,42 @@ func (s *server) handleIndexPage() http.HandlerFunc {
 			pageData["RecordsHard"] = rcHard
 		}
 
+		if rcPain != nil {
+			pageData["RecordsPain"] = rcPain
+		}
+
+		if rcBrutal != nil {
+			pageData["RecordsBrutal"] = rcBrutal
+		}
+
+		if rcEvol != nil {
+			pageData["RecordsEvol"] = rcEvol
+		}
+
 		err = templateIndexPage.ExecuteTemplate(w, "base", pageData)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+	}
+}
+
+func (s *server) handleRulePage() http.HandlerFunc {
+	var templateRulePage *template.Template
+	templateRulePage = template.Must(renderFuncTemplate("./internal/templates/rules.html"))
+
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		pageData := map[string]interface{}{
+			"Title":   "Game with nums",
+			"Message": "Полезная информация",
+		}
+
+		if s.checkForMenu(r) {
+			pageData["Login"] = struct{}{}
+		}
+
+		err := templateRulePage.ExecuteTemplate(w, "base", pageData)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -174,7 +228,7 @@ func (s *server) handleLogin() http.HandlerFunc {
 
 				u, err := s.store.User().FindByEmail(l.Email)
 				if err != nil || !u.ComparePassword(l.Password) {
-					session.Values["user_message"] = errIncorrectEmailOrPassword.Error()
+					session.Values["user_message"] = "Неправильные логин или пароль"
 					if err := s.sessionStore.Save(r, w, session); err != nil {
 						s.error(w, r, http.StatusInternalServerError, err)
 						return
@@ -189,12 +243,12 @@ func (s *server) handleLogin() http.HandlerFunc {
 					s.error(w, r, http.StatusInternalServerError, err)
 					return
 				}
-				http.Redirect(w, r, "/index", http.StatusFound)
+				http.Redirect(w, r, "/private/game", http.StatusFound)
 				return
 
 			}
 
-			session.Values["user_message"] = errIncorrectEmailOrPassword.Error()
+			session.Values["user_message"] = "Неправильные логин или пароль"
 			if err := s.sessionStore.Save(r, w, session); err != nil {
 				s.error(w, r, http.StatusInternalServerError, err)
 				return
@@ -211,9 +265,9 @@ func (s *server) handleLogin() http.HandlerFunc {
 
 			var message string
 			mes, ok := session.Values["user_message"]
-			fmt.Println(ok, mes)
+
 			if !ok || mes == nil {
-				message = "Login for game!"
+				message = "Войди в игру!"
 			} else {
 				message = mes.(string)
 				session.Values["user_message"] = nil
@@ -224,7 +278,7 @@ func (s *server) handleLogin() http.HandlerFunc {
 			}
 
 			pageData := map[string]interface{}{
-				"Title":          "Login!",
+				"Title":          "Game with nums - Login!",
 				"Message":        message,
 				csrf.TemplateTag: csrf.TemplateField(r),
 			}
@@ -263,7 +317,6 @@ func (s *server) handleLogout() http.HandlerFunc {
 		}
 
 		if err := s.store.Round().DeleteByUserID(strconv.Itoa(id.(int))); err != nil {
-			fmt.Println(err)
 			s.error(w, r, http.StatusInternalServerError, err)
 			return
 		}
@@ -358,7 +411,7 @@ func (s *server) handleRegistration() http.HandlerFunc {
 
 					u.Sanitize()
 				}
-				session.Values["user_message"] = "you are registered successfully"
+				session.Values["user_message"] = "Вы успешно зарегистрированы."
 				if err := s.sessionStore.Save(r, w, session); err != nil {
 					s.error(w, r, http.StatusInternalServerError, err)
 					return
@@ -368,7 +421,7 @@ func (s *server) handleRegistration() http.HandlerFunc {
 
 			}
 
-			session.Values["user_message"] = "wrong entered values"
+			session.Values["user_message"] = "Вы ввели недопустимые значения."
 			if err := s.sessionStore.Save(r, w, session); err != nil {
 				s.error(w, r, http.StatusInternalServerError, err)
 				return
@@ -382,8 +435,23 @@ func (s *server) handleRegistration() http.HandlerFunc {
 				return
 			}
 
+			var message string
+			mes, ok := session.Values["user_message"]
+
+			if !ok || mes == nil {
+				message = "Присоединяйся к игре!"
+			} else {
+				message = mes.(string)
+				session.Values["user_message"] = nil
+				if err := s.sessionStore.Save(r, w, session); err != nil {
+					s.error(w, r, http.StatusInternalServerError, err)
+					return
+				}
+			}
+
 			pageData := map[string]interface{}{
-				"Title":          "Registration!",
+				"Title":          "Game with nums - Registration!",
+				"Message":        message,
 				csrf.TemplateTag: csrf.TemplateField(r),
 			}
 
@@ -404,7 +472,7 @@ func (s *server) handleGamePage() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 		pageData := map[string]interface{}{
-			"Title":          "Game!",
+			"Title":          "Game with nums - the Game!",
 			csrf.TemplateTag: csrf.TemplateField(r),
 		}
 
@@ -434,7 +502,7 @@ func (s *server) handleGameStatisticPage() http.HandlerFunc {
 	var templateIndexPage *template.Template
 	templateIndexPage = template.Must(renderFuncTemplate("./internal/templates/index.html"))
 
-	var rcEasy, rcMedium, rcHard *[]model.Record
+	var rcEasy, rcMedium, rcHard, rcPain, rcBrutal, rcEvol *[]model.Record
 	var err error
 	var wg sync.WaitGroup
 
@@ -458,6 +526,25 @@ func (s *server) handleGameStatisticPage() http.HandlerFunc {
 			defer wg.Done()
 			rcHard, err = s.store.Record().FindByUserID(id, "12")
 		}()
+
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			rcPain, err = s.store.Record().FindByUserID(id, "32")
+		}()
+
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			rcBrutal, err = s.store.Record().FindByUserID(id, "64")
+		}()
+
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			rcEvol, err = s.store.Record().FindByUserID(id, "128")
+		}()
+
 		wg.Wait()
 
 		if err != nil {
@@ -468,8 +555,8 @@ func (s *server) handleGameStatisticPage() http.HandlerFunc {
 		}
 
 		pageData := map[string]interface{}{
-			"Title":   "Users' Records!",
-			"Message": fmt.Sprintf("%s Records!", u.Email),
+			"Title":   "Game with nums - User's Stats!",
+			"Message": fmt.Sprintf("Результаты десяти лучших игр %s", u.Email),
 		}
 
 		if s.checkForMenu(r) {
@@ -486,6 +573,18 @@ func (s *server) handleGameStatisticPage() http.HandlerFunc {
 
 		if rcHard != nil {
 			pageData["RecordsHard"] = *rcHard
+		}
+
+		if rcPain != nil {
+			pageData["RecordsPain"] = *rcPain
+		}
+
+		if rcBrutal != nil {
+			pageData["RecordsBrutal"] = rcBrutal
+		}
+
+		if rcEvol != nil {
+			pageData["RecordsEvol"] = rcEvol
 		}
 
 		err = templateIndexPage.ExecuteTemplate(w, "base", pageData)

@@ -69,3 +69,22 @@ func TestRoundRepository_DeleteByUserID(t *testing.T) {
 	assert.EqualError(t, err, store.ErrRecordNotFound.Error())
 
 }
+
+func TestRoundRepository_RoundCheck(t *testing.T) {
+	db, teardown := sqlstore.TestDB(t, databaseDriver, databaseURL)
+	defer teardown("users", "rounds")
+
+	s := sqlstore.New(db)
+	u := model.TestUser(t)
+	r := model.TestRound(t)
+	res := s.Round().RoundCheck(u.ID)
+	assert.Equal(t, false, res)
+
+	s.User().Create(u)
+	r.UserID = u.ID
+	s.Round().Create(r)
+
+	res = s.Round().RoundCheck(u.ID)
+	assert.Equal(t, true, res)
+
+}

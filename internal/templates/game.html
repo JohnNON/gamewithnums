@@ -3,17 +3,20 @@
 
 <main class="centered">
     <div class="nes-container with-title is-centered is-rounded">
-        <p class="title">Let's Game!</p>
+        <p class="title">Поиграем!</p>
 
         <div class="nes-container is-rounded">
             <div class="nes-select">
                 <select required id="difficult">
-                    <option selected value="4">Easy</option>
-                    <option value="8">Medium</option>
-                    <option value="12">Hard</option>
+                    <option selected value="4">Я слишком молод, чтобы умереть</option>
+                    <option value="8">Я просто хочу убивать</option>
+                    <option value="12">Эй, не так грубо</option>
+                    <option value="32">Сделай мне больно</option>
+                    <option value="64">Сверхнасилие</option>
+                    <option value="128">Кошмар</option>
                 </select>
               </div>
-            <button id="newgameBtn" class="nes-btn is-primary" onclick="newgame();">Start New Game</button>
+            <button id="newgameBtn" class="nes-btn is-primary" onclick="newgame();">Начать новую игру</button>
         </div>
 
         <div id="rounds" class="nes-container is-rounded game-field">
@@ -21,10 +24,10 @@
 
         <div class="nes-container is-rounded">
             <div class="nes-field is-inline">
-                <label for="warning_field">Say Number:</label>
+                <label for="warning_field">Введите число:</label>
                 <input type="text" id="input" class="nes-input" maxlength="4" size="20">
             </div>
-            <button id="checkBtn" class="nes-btn is-primary is-disabled" disabled onclick="check();">Check Number</button>
+            <button id="checkBtn" class="nes-btn is-primary is-disabled" disabled onclick="check();">Проверить</button>
         </div>
     </div>
     <audio src="/assets/static/sound/beastSound.mp3" type="audio/mpeg" autoplay loop preload class="on" id="sound"></audio>
@@ -36,10 +39,10 @@
 <dialog class="nes-dialog is-rounded" id="dialog-rounded">
     <form method="dialog">
         {{ .csrfField }}
-      <p class="title">Continue game?</p>
+      <p class="title">Продолжить игру?</p>
       <menu class="dialog-menu">
-        <button class="nes-btn" onclick="newgame();">No</button>
-        <button class="nes-btn is-primary" onclick="loadgame();">Yes</button>
+        <button class="nes-btn" onclick="newgame();">Нет</button>
+        <button class="nes-btn is-primary" onclick="loadgame();">Да</button>
       </menu>
     </form>
 </dialog>

@@ -21,4 +21,5 @@ type RoundRepository interface {
 	Create(*model.Round) error
 	FindByUserID(string) (*[]model.Round, error)
 	DeleteByUserID(string) error
+	RoundCheck(int) bool
 }

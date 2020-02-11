@@ -60,8 +60,9 @@ func (s *server) configureRouter() {
 	s.router.Use(s.setRequestID)
 	s.router.Use(s.logRequest)
 	s.router.Use(handlers.CORS(handlers.AllowedOrigins([]string{"*"})))
-	s.router.HandleFunc("/", s.handleIndexPage()).Methods("GET")
-	s.router.HandleFunc("/index", s.handleIndexPage()).Methods("GET")
+	s.router.HandleFunc("/", s.handleRulePage()).Methods("GET")
+	s.router.HandleFunc("/index", s.handleRulePage()).Methods("GET")
+	s.router.HandleFunc("/records", s.handleIndexPage()).Methods("GET")
 	s.router.HandleFunc("/users", s.handleUsersCreate()).Methods("POST")
 	s.router.HandleFunc("/sessions", s.handleSessionsCreate()).Methods("POST")
 	s.router.HandleFunc("/login", s.handleLogin()).Methods("POST", "GET")
@@ -170,13 +171,15 @@ func (s *server) authenticateUser(next http.Handler) http.Handler {
 
 		id, ok := session.Values["user_id"]
 		if !ok || id == nil {
-			s.error(w, r, http.StatusUnauthorized, errNotAuthenticated)
+			//s.error(w, r, http.StatusUnauthorized, errNotAuthenticated)
+			http.Redirect(w, r, "/login", http.StatusFound)
 			return
 		}
 
 		u, err := s.store.User().Find(id.(int))
 		if err != nil {
-			s.error(w, r, http.StatusUnauthorized, errNotAuthenticated)
+			//s.error(w, r, http.StatusUnauthorized, errNotAuthenticated)
+			http.Redirect(w, r, "/login", http.StatusFound)
 			return
 		}
 		next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), ctxKeyUser, u)))

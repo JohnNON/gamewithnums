@@ -61,3 +61,19 @@ func (r *RoundRepository) DeleteByUserID(userID string) error {
 
 	return nil
 }
+
+// RoundCheck - проверяет есть ли записи с userID
+func (r *RoundRepository) RoundCheck(userID int) bool {
+	rnd := &model.Round{}
+	if err := r.store.db.QueryRow(
+		"SELECT id FROM rounds WHERE userid = $1 LIMIT 1",
+		userID,
+	).Scan(
+		&rnd.ID,
+	); err != nil {
+
+		return false
+	}
+
+	return true
+}

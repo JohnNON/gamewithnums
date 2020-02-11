@@ -3,17 +3,17 @@
 
 <main class="centered">
     <div class="nes-container with-title is-centered is-rounded">
-        <p class="title">Easy!</p>
+        <p class="title">Я слишком молод, чтобы умереть</p>
         {{ if .RecordsEasy }}
         <table class="nes-table is-bordered table-center">
             <thead>
                 <tr>
-                    <th>Num</th>
+                    <th>#</th>
                     {{ if $.Records }}
-                    <th>Gamer</th>
+                    <th>Игрок</th>
                     {{ end }}
-                    <th>Game Time</th>
-                    <th>Rounds</th>
+                    <th>Время</th>
+                    <th>Раунды</th>
                 </tr>
             </thead>
             <tbody>
@@ -30,27 +30,31 @@
             </tbody>
         </table>
         {{ else }}
-            <p>Nothing</p>
+            <p>Рекордов еще не поставлено!</p>
         {{ end }}
     </div>
 
     <div class="nes-container with-title is-centered is-rounded">
-        <p class="title">Medium!</p>
+        <p class="title">Я просто хочу убивать</p>
         {{ if .RecordsMedium }}
-        <table class="nes-table is-bordered is-centered">
+        <table class="nes-table is-bordered table-center">
             <thead>
                 <tr>
-                    <th>Num</th>
-                    <th>Gamer</th>
-                    <th>Game Time</th>
-                    <th>Game Total Rounds</th>
+                    <th>#</th>
+                    {{ if $.Records }}
+                    <th>Игрок</th>
+                    {{ end }}
+                    <th>Время</th>
+                    <th>Раунды</th>
                 </tr>
             </thead>
             <tbody>
                 {{ range $i, $rc := .RecordsMedium }}
                 <tr>
                     <td>{{ add $i 1 }}</td>
+                    {{ if $.Records }}
                     <td>{{ $rc.Email }}</td>
+                    {{ end }}
                     <td>{{ formated $rc.GameTime }}</td>
                     <td>{{ $rc.RoundCount }}</td>
                 </tr>
@@ -58,27 +62,31 @@
             </tbody>
         </table>
         {{ else }}
-            <p>Nothing</p>
+            <p>Рекордов еще не поставлено!</p>
         {{ end }}
     </div>
 
     <div class="nes-container with-title is-centered is-rounded">
-        <p class="title">Hard!</p>
+        <p class="title">Эй, не так грубо</p>
         {{ if .RecordsHard }}
-        <table class="nes-table is-bordered is-centered">
+        <table class="nes-table is-bordered table-center">
             <thead>
                 <tr>
-                    <th>Num</th>
-                    <th>Gamer</th>
-                    <th>Game Time</th>
-                    <th>Game Total Rounds</th>
+                    <th>#</th>
+                    {{ if $.Records }}
+                    <th>Игрок</th>
+                    {{ end }}
+                    <th>Время</th>
+                    <th>Раунды</th>
                 </tr>
             </thead>
             <tbody>
                 {{ range $i, $rc := .RecordsHard }}
                 <tr>
                     <td>{{ add $i 1 }}</td>
+                    {{ if $.Records }}
                     <td>{{ $rc.Email }}</td>
+                    {{ end }}
                     <td>{{ formated $rc.GameTime }}</td>
                     <td>{{ $rc.RoundCount }}</td>
                 </tr>
@@ -86,9 +94,106 @@
             </tbody>
         </table>
         {{ else }}
-            <p>Nothing</p>
+            <p>Рекордов еще не поставлено!</p>
         {{ end }}
     </div>
+
+    <div class="nes-container with-title is-centered is-rounded">
+        <p class="title">Сделай мне больно</p>
+        {{ if .RecordsPain }}
+        <table class="nes-table is-bordered table-center">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    {{ if $.Records }}
+                    <th>Игрок</th>
+                    {{ end }}
+                    <th>Время</th>
+                    <th>Раунды</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{ range $i, $rc := .RecordsPain }}
+                <tr>
+                    <td>{{ add $i 1 }}</td>
+                    {{ if $.Records }}
+                    <td>{{ $rc.Email }}</td>
+                    {{ end }}
+                    <td>{{ formated $rc.GameTime }}</td>
+                    <td>{{ $rc.RoundCount }}</td>
+                </tr>
+                {{ end }}
+            </tbody>
+        </table>
+        {{ else }}
+            <p>Рекордов еще не поставлено!</p>
+        {{ end }}
+    </div>
+
+    <div class="nes-container with-title is-centered is-rounded">
+        <p class="title">Сверхнасилие</p>
+        {{ if .RecordsBrutal }}
+        <table class="nes-table is-bordered table-center">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    {{ if $.Records }}
+                    <th>Игрок</th>
+                    {{ end }}
+                    <th>Время</th>
+                    <th>Раунды</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{ range $i, $rc := .RecordsBrutal }}
+                <tr>
+                    <td>{{ add $i 1 }}</td>
+                    {{ if $.Records }}
+                    <td>{{ $rc.Email }}</td>
+                    {{ end }}
+                    <td>{{ formated $rc.GameTime }}</td>
+                    <td>{{ $rc.RoundCount }}</td>
+                </tr>
+                {{ end }}
+            </tbody>
+        </table>
+        {{ else }}
+            <p>Рекордов еще не поставлено!</p>
+        {{ end }}
+    </div>
+
+    <div class="nes-container with-title is-centered is-rounded">
+        <p class="title">Кошмар</p>
+        {{ if .RecordsEvol }}
+        <table class="nes-table is-bordered table-center">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    {{ if $.Records }}
+                    <th>Игрок</th>
+                    {{ end }}
+                    <th>Время</th>
+                    <th>Раунды</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{ range $i, $rc := .RecordsEvol }}
+                <tr>
+                    <td>{{ add $i 1 }}</td>
+                    {{ if $.Records }}
+                    <td>{{ $rc.Email }}</td>
+                    {{ end }}
+                    <td>{{ formated $rc.GameTime }}</td>
+                    <td>{{ $rc.RoundCount }}</td>
+                </tr>
+                {{ end }}
+            </tbody>
+        </table>
+        {{ else }}
+            <p>Рекордов еще не поставлено!</p>
+        {{ end }}
+    </div>
+
 </main>
 
 {{ end }}

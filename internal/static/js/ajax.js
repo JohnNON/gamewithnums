@@ -28,6 +28,7 @@ function newgame() {
     let difficult = encodeURIComponent(document.getElementById("difficult").value);
     let input = document.getElementById("input");
     input.maxLength = difficult;
+    input.value = ""
 
     if (xmlHttp.readyState == 4 || xmlHttp.readyState == 0) {
         xmlHttp.open("POST", "/private/newgame", true);
@@ -55,14 +56,14 @@ function newgameServerResponse() {
                 baseDiv.innerHTML = '';
                 let div = document.createElement('div');
                 div.className = "game-round";
-                div.innerHTML = "<p>New Game Started!</p>";
+                div.innerHTML = "<p>Новая игра началась!</p>";
                 baseDiv.append(div);
                 baseDiv.scrollTop = baseDiv.scrollHeight;
                 let btn = document.getElementById("checkBtn");
                 btn.disabled = false;
                 btn.className = "nes-btn is-primary";
             } else {
-                alert("Some error happend! " + data["err"]);
+                alert("Какая-то ошибка: " + data["err"]);
             }
         }
         else
@@ -100,7 +101,7 @@ function checkServerResponse() {
             let div = document.createElement('div');
             div.className = "game-round";
             if (data["status"] === "Win") {
-                div.innerHTML = "<p>You Win! End The Game.</p>" + "<p>" + data["val"] + "</p>";
+                div.innerHTML = "<p>Вы отгадали правильно!</p> <p>Конец игры.</p>" + "<p>" + data["val"] + "</p>";
                 let btn = document.getElementById("checkBtn");
                 btn.disabled = true;
                 btn.className = "nes-btn is-primary is-disabled";
@@ -143,6 +144,12 @@ function loadGameServerResponse() {
             document.getElementById("difficult").value = diff;
 
             let baseDiv = document.getElementById("rounds");
+
+            let div = document.createElement('div');
+            div.className = "game-round";
+            div.innerHTML = "<p>Игра загружена!</p>";
+            baseDiv.append(div);
+            baseDiv.scrollTop = baseDiv.scrollHeight;
 
             for (var i = 1; i < data.length; i++) {
                 let div = document.createElement('div');

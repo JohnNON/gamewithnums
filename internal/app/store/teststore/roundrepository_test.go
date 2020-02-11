@@ -42,7 +42,7 @@ func TestRoundRepository_FindByUserID(t *testing.T) {
 
 }
 
-func TestRecordRepository_DeleteByUserID(t *testing.T) {
+func TestRoundRepository_DeleteByUserID(t *testing.T) {
 	s := teststore.New()
 
 	_, err := s.Round().FindByUserID("1")
@@ -57,5 +57,22 @@ func TestRecordRepository_DeleteByUserID(t *testing.T) {
 	rounds, err := s.Round().FindByUserID(strconv.Itoa(u.ID))
 	assert.Error(t, err)
 	assert.Nil(t, rounds)
+
+}
+
+func TestRoundRepository_RoundCheck(t *testing.T) {
+	s := teststore.New()
+
+	u := model.TestUser(t)
+	r := model.TestRound(t)
+	res := s.Round().RoundCheck(u.ID)
+	assert.Equal(t, false, res)
+
+	s.User().Create(u)
+	r.UserID = u.ID
+	s.Round().Create(r)
+
+	res = s.Round().RoundCheck(u.ID)
+	assert.Equal(t, true, res)
 
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"log"
+	"os"
 
 	"github.com/BurntSushi/toml"
 	"github.com/JohnNON/gamewithnums/internal/app/gameserver"
@@ -23,6 +24,10 @@ func main() {
 	_, err := toml.DecodeFile(configPath, config)
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	if os.Getenv("PORT") != "" {
+		config.BindAddr = ":" + os.Getenv("PORT")
 	}
 
 	if err := gameserver.Start(config); err != nil {

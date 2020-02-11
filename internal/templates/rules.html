@@ -1,0 +1,30 @@
+{{ template "base" . }}
+{{ define "content" }}
+
+<main class="centered">
+    <div class="nes-container with-title is-centered is-rounded">
+        <p class="title">Как играть?</p>
+        <p>1. <a href="/registration">Зарегистрируйся</a> и <a href="/login">войди</a> в игру.</p>
+        <p>2. Начни новую игру,выбрав сложность и нажав кнопку "Начать новую игру", или продолжи неоконченную игру в появляющемся меню.</p>
+        <p>3. Вводи свое число и смотри за подсказками.</p>
+    </div>
+
+    <div class="nes-container with-title is-centered is-rounded">
+        <p class="title">Правила игры</p>
+        <p>1. В зависимости от выбранной сложности компьютер загадает число:</p>
+             <p><span class="nes-text is-primary">"Я слишком молод, чтобы умереть"</span> - 4 знака,
+                <span class="nes-text is-primary">"Я просто хочу убивать"</span> - 8 знаков,
+                <span class="nes-text is-primary">"Эй, не так грубо"</span> - 12 знаков.
+                <span class="nes-text is-primary">"Сделай мне больно"</span> - 32 знака.
+                <span class="nes-text is-primary">"Сверхнасилие"</span> - 64 знака.
+                <span class="nes-text is-primary">"Кошмар"</span> - 128 знаков.</p>
+        <p>2. В ответ на введенное число появится подсказка: </p>
+            <p><span class="nes-text is-primary">B</span> - цифра стоит на верном месте.
+                <span class="nes-text is-primary">K</span> - цифра есть в числе, но стоит не в этой позиции.
+                <span class="nes-text is-primary">X</span> - такой цифры в числе нет.</p>
+        <p>3. Цифры в числе могут повторяться.</p>
+        <p>4. Число может начинаться с 0 (нуля).</p>
+    </div>
+</main>
+
+{{ end }}
