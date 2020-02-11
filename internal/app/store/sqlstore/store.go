@@ -11,6 +11,7 @@ type Store struct {
 	db               *sqlx.DB
 	userRepository   *UserRepository
 	recordRepository *RecordRepository
+	roundRepository  *RoundRepository
 }
 
 // New - функция создающее новое хранилище
@@ -40,4 +41,15 @@ func (s *Store) Record() store.RecordRepository {
 	}
 
 	return s.recordRepository
+}
+
+// Round - метод для работы с репозиторием record
+func (s *Store) Round() store.RoundRepository {
+	if s.roundRepository == nil {
+		s.roundRepository = &RoundRepository{
+			store: s,
+		}
+	}
+
+	return s.roundRepository
 }

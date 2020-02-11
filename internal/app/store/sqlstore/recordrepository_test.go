@@ -27,7 +27,7 @@ func TestRecordRepository_Create(t *testing.T) {
 	assert.NotNil(t, r)
 }
 
-func TestUserRepository_FindByUserID(t *testing.T) {
+func TestRecordRepository_FindByUserID(t *testing.T) {
 	db, teardown := sqlstore.TestDB(t, databaseDriver, databaseURL)
 	defer teardown("users", "records")
 
@@ -47,7 +47,7 @@ func TestUserRepository_FindByUserID(t *testing.T) {
 
 }
 
-func TestUserRepository_GetAllRecords(t *testing.T) {
+func TestRecordRepository_GetAllRecords(t *testing.T) {
 	db, teardown := sqlstore.TestDB(t, databaseDriver, databaseURL)
 	defer teardown("users", "records")
 

@@ -15,7 +15,12 @@ func TestRecordRepository_Create(t *testing.T) {
 	u := model.TestUser(t)
 
 	assert.NoError(t, s.User().Create(u))
-	assert.NotNil(t, u)
+
+	rc := model.TestRecord(t)
+	rc.UserID = u.ID
+	assert.NoError(t, s.Record().Create(rc))
+
+	assert.NotNil(t, rc)
 }
 
 func TestRecordRepository_FindByUserID(t *testing.T) {

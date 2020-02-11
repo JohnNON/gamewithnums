@@ -9,6 +9,7 @@ import (
 type Store struct {
 	userRepository   *UserRepository
 	recordRepository *RecordRepository
+	roundRepository  *RoundRepository
 }
 
 // New - функция создающее новое хранилище
@@ -28,7 +29,7 @@ func (s *Store) User() store.UserRepository {
 	return s.userRepository
 }
 
-// Record - метод для работы с репозиторием user
+// Record - метод для работы с репозиторием record
 func (s *Store) Record() store.RecordRepository {
 	if s.recordRepository == nil {
 		s.recordRepository = &RecordRepository{
@@ -38,4 +39,16 @@ func (s *Store) Record() store.RecordRepository {
 	}
 
 	return s.recordRepository
+}
+
+// Round - метод для работы с репозиторием round
+func (s *Store) Round() store.RoundRepository {
+	if s.roundRepository == nil {
+		s.roundRepository = &RoundRepository{
+			store:  s,
+			rounds: make(map[int]*model.Round),
+		}
+	}
+
+	return s.roundRepository
 }

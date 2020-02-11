@@ -13,7 +13,7 @@ var (
 func TestMain(m *testing.M) {
 	databaseURL = os.Getenv("DATABASE_URL")
 	databaseDriver = os.Getenv("DATABASE_DRIVER")
-	if databaseURL == "" {
+	if databaseURL == "" || databaseDriver == "" {
 		databaseURL = "user=postgres password=C0nf1cer dbname=gamewithnums_test sslmode=disable"
 		databaseDriver = "postgres"
 	}

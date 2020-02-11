@@ -7,6 +7,8 @@ type Config struct {
 	DatabaseURL    string `toml:"database_url"`
 	DatabaseDriver string `toml:"database_driver"`
 	SessionKey     string `toml:"session_key"`
+	SessionMaxAge  int    `toml:"session_maxage"`
+	CsrfKey        string `toml:"csrf_key"`
 }
 
 // NewConfig - инициализация конфига по умолчанию

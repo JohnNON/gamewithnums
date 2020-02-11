@@ -26,7 +26,7 @@ func (r *RecordRepository) Create(rc *model.Record) error {
 	return nil
 }
 
-// FindByUserID - ищет user по значению поля email в тестовом хранилище
+// FindByUserID - ищет record по значению поля userID и difference в тестовом хранилище
 func (r *RecordRepository) FindByUserID(userID string, diff string) (*[]model.Record, error) {
 	records := &[]model.Record{}
 	for i, rc := range r.records {
@@ -44,7 +44,7 @@ func (r *RecordRepository) FindByUserID(userID string, diff string) (*[]model.Re
 	return nil, store.ErrRecordNotFound
 }
 
-// GetAllRecords - ищет user по значению поля email в тестовом хранилище
+// GetAllRecords - ищет record по значению поля difference в тестовом хранилище
 func (r *RecordRepository) GetAllRecords(diff string) (*[]model.Record, error) {
 	records := &[]model.Record{}
 	for i, rc := range r.records {

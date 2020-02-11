@@ -3,3 +3,5 @@ log_level = "debug"
 database_url = "user=postgres dbname=gamewithnums sslmode=disable"
 database_driver = "postgres"
 session_key = "secret"
+session_maxage = 3600
+csrf_key = "secret"

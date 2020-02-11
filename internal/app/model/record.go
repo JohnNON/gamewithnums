@@ -11,6 +11,7 @@ type Record struct {
 	Difficulty int
 	RoundCount int
 	GameTime   int
+	User
 }
 
 // Validate - метод для валидации вводимых данных

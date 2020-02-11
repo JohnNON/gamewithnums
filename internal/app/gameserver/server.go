@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"html/template"
 	"net/http"
 	"time"
 
@@ -21,18 +20,14 @@ const (
 	sessionName        = "gameserverUser"
 	ctxKeyUser  ctxKey = iota
 	ctxKeyRequestID
+	ctxKeyMessage
 )
 
 var (
 	errIncorrectEmailOrPassword = errors.New("incorect email or password")
 	errNotAuthenticated         = errors.New("not authenticated")
+	errInternalServerError      = errors.New("internal server error")
 )
-
-var funcMap = template.FuncMap{
-	"add": func(a, b int) int {
-		return a + b
-	},
-}
 
 type ctxKey int8
 
@@ -65,48 +60,24 @@ func (s *server) configureRouter() {
 	s.router.Use(s.setRequestID)
 	s.router.Use(s.logRequest)
 	s.router.Use(handlers.CORS(handlers.AllowedOrigins([]string{"*"})))
+	s.router.HandleFunc("/", s.handleIndexPage()).Methods("GET")
 	s.router.HandleFunc("/index", s.handleIndexPage()).Methods("GET")
 	s.router.HandleFunc("/users", s.handleUsersCreate()).Methods("POST")
 	s.router.HandleFunc("/sessions", s.handleSessionsCreate()).Methods("POST")
+	s.router.HandleFunc("/login", s.handleLogin()).Methods("POST", "GET")
+	s.router.HandleFunc("/logout", s.handleLogout()).Methods("GET")
+	s.router.HandleFunc("/registration", s.handleRegistration()).Methods("POST", "GET")
+	s.router.PathPrefix("/assets").Handler(http.StripPrefix("/assets/static/", http.FileServer(http.Dir("./internal/static/"))))
 
 	private := s.router.PathPrefix("/private").Subrouter()
 	private.Use(s.authenticateUser)
 	private.HandleFunc("/whoami", s.handleWhoami()).Methods("GET")
-}
-
-func renderTemplate(s string) (*template.Template, error) {
-	return template.ParseFiles(s, "./internal/templates/head.html", "./internal/templates/scripts.html", "./internal/templates/base.html")
-}
-
-func renderFuncTemplate(s string) (*template.Template, error) {
-	tmpl := template.New(s)
-	tmpl.Funcs(funcMap)
-	return tmpl.ParseFiles(s, "./internal/templates/head.html", "./internal/templates/scripts.html", "./internal/templates/base.html")
-}
-
-func (s *server) handleIndexPage() http.HandlerFunc {
-	var templateIndex *template.Template
-	templateIndex = template.Must(renderFuncTemplate("./internal/templates/index.html"))
-
-	return func(w http.ResponseWriter, r *http.Request) {
-		//u := r.Context().Value(ctxKeyUser).(*model.User)
-		rc, err := s.store.Record().GetAllRecords("1")
-		if err != nil {
-			s.error(w, r, http.StatusInternalServerError, err)
-			return
-		}
-		pageData := map[string]interface{}{
-			"Title":   "Greetings!",
-			"Records": *rc,
-		}
-
-		err = templateIndex.ExecuteTemplate(w, "base", pageData)
-		if err != nil {
-			s.error(w, r, http.StatusInternalServerError, err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-	}
+	private.HandleFunc("/game", s.handleGamePage()).Methods("GET")
+	private.HandleFunc("/statistic", s.handleGameStatisticPage()).Methods("GET")
+	private.HandleFunc("/check", s.handleGameRoundCheck()).Methods("POST")
+	private.HandleFunc("/checkgame", s.handleGameEndCheck()).Methods("POST")
+	private.HandleFunc("/newgame", s.handleNewGame()).Methods("POST")
+	private.HandleFunc("/loadgame", s.handleLoadGame()).Methods("POST")
 }
 
 func (s *server) handleUsersCreate() http.HandlerFunc {
@@ -198,7 +169,7 @@ func (s *server) authenticateUser(next http.Handler) http.Handler {
 		}
 
 		id, ok := session.Values["user_id"]
-		if !ok {
+		if !ok || id == nil {
 			s.error(w, r, http.StatusUnauthorized, errNotAuthenticated)
 			return
 		}

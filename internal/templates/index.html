@@ -1,27 +1,94 @@
 {{ template "base" . }}
 {{ define "content" }}
-<a href="/login">Login</a>
-<a href="/register">Registration</a>
-{{ if .Users}}
-<table>
-    <thead>
-        <tr>
-            <th>Num</th>
-            <th>Name</th>
-            <th>Pass</th>
-        </tr>
-    </thead>
-    <tbody>
-        {{ range $i, $u := .Users }}
-        <tr>
-            <td>{{ add $i 1 }}</td>
-            <td>{{ $u.Email }}</td>
-            <td>{{ $u.Password }}</td>
-        </tr>
+
+<main class="centered">
+    <div class="nes-container with-title is-centered is-rounded">
+        <p class="title">Easy!</p>
+        {{ if .RecordsEasy }}
+        <table class="nes-table is-bordered table-center">
+            <thead>
+                <tr>
+                    <th>Num</th>
+                    {{ if $.Records }}
+                    <th>Gamer</th>
+                    {{ end }}
+                    <th>Game Time</th>
+                    <th>Rounds</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{ range $i, $rc := .RecordsEasy }}
+                <tr>
+                    <td>{{ add $i 1 }}</td>
+                    {{ if $.Records }}
+                    <td>{{ $rc.Email }}</td>
+                    {{ end }}
+                    <td>{{ formated $rc.GameTime }}</td>
+                    <td>{{ $rc.RoundCount }}</td>
+                </tr>
+                {{ end }}
+            </tbody>
+        </table>
+        {{ else }}
+            <p>Nothing</p>
         {{ end }}
-    </tbody>
-</table>
-{{ else }}
-    <p>Nothing</p>
-{{ end }}
+    </div>
+
+    <div class="nes-container with-title is-centered is-rounded">
+        <p class="title">Medium!</p>
+        {{ if .RecordsMedium }}
+        <table class="nes-table is-bordered is-centered">
+            <thead>
+                <tr>
+                    <th>Num</th>
+                    <th>Gamer</th>
+                    <th>Game Time</th>
+                    <th>Game Total Rounds</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{ range $i, $rc := .RecordsMedium }}
+                <tr>
+                    <td>{{ add $i 1 }}</td>
+                    <td>{{ $rc.Email }}</td>
+                    <td>{{ formated $rc.GameTime }}</td>
+                    <td>{{ $rc.RoundCount }}</td>
+                </tr>
+                {{ end }}
+            </tbody>
+        </table>
+        {{ else }}
+            <p>Nothing</p>
+        {{ end }}
+    </div>
+
+    <div class="nes-container with-title is-centered is-rounded">
+        <p class="title">Hard!</p>
+        {{ if .RecordsHard }}
+        <table class="nes-table is-bordered is-centered">
+            <thead>
+                <tr>
+                    <th>Num</th>
+                    <th>Gamer</th>
+                    <th>Game Time</th>
+                    <th>Game Total Rounds</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{ range $i, $rc := .RecordsHard }}
+                <tr>
+                    <td>{{ add $i 1 }}</td>
+                    <td>{{ $rc.Email }}</td>
+                    <td>{{ formated $rc.GameTime }}</td>
+                    <td>{{ $rc.RoundCount }}</td>
+                </tr>
+                {{ end }}
+            </tbody>
+        </table>
+        {{ else }}
+            <p>Nothing</p>
+        {{ end }}
+    </div>
+</main>
+
 {{ end }}

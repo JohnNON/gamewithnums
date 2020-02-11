@@ -15,3 +15,10 @@ type RecordRepository interface {
 	FindByUserID(string, string) (*[]model.Record, error)
 	GetAllRecords(string) (*[]model.Record, error)
 }
+
+// RoundRepository - интерфейс, описывающий хранилище таблицы рекордов
+type RoundRepository interface {
+	Create(*model.Round) error
+	FindByUserID(string) (*[]model.Round, error)
+	DeleteByUserID(string) error
+}

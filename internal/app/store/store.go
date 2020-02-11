@@ -4,4 +4,5 @@ package store
 type Store interface {
 	User() UserRepository
 	Record() RecordRepository
+	Round() RoundRepository
 }

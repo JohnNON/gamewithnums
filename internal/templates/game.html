@@ -1,0 +1,50 @@
+{{ template "base" . }}
+{{ define "content" }}
+
+<main class="centered">
+    <div class="nes-container with-title is-centered is-rounded">
+        <p class="title">Let's Game!</p>
+
+        <div class="nes-container is-rounded">
+            <div class="nes-select">
+                <select required id="difficult">
+                    <option selected value="4">Easy</option>
+                    <option value="8">Medium</option>
+                    <option value="12">Hard</option>
+                </select>
+              </div>
+            <button id="newgameBtn" class="nes-btn is-primary" onclick="newgame();">Start New Game</button>
+        </div>
+
+        <div id="rounds" class="nes-container is-rounded game-field">
+        </div>
+
+        <div class="nes-container is-rounded">
+            <div class="nes-field is-inline">
+                <label for="warning_field">Say Number:</label>
+                <input type="text" id="input" class="nes-input" maxlength="4" size="20">
+            </div>
+            <button id="checkBtn" class="nes-btn is-primary is-disabled" disabled onclick="check();">Check Number</button>
+        </div>
+    </div>
+    <audio src="/assets/static/sound/beastSound.mp3" type="audio/mpeg" autoplay loop preload class="on" id="sound"></audio>
+    <button id="checkBtn" class="nes-btn is-primary sound" onclick="sound();">
+        <img src="/assets/static/images/sound_on.png" alt="on" style="vertical-align: middle; image-rendering: pixelated;" width="24" height="24" id="soundimg">
+    </button>
+</main>
+
+<dialog class="nes-dialog is-rounded" id="dialog-rounded">
+    <form method="dialog">
+        {{ .csrfField }}
+      <p class="title">Continue game?</p>
+      <menu class="dialog-menu">
+        <button class="nes-btn" onclick="newgame();">No</button>
+        <button class="nes-btn is-primary" onclick="loadgame();">Yes</button>
+      </menu>
+    </form>
+</dialog>
+
+<script src="/assets/static/js/unended.js">
+</script>
+
+{{ end }}

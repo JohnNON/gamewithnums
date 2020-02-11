@@ -1,0 +1,19 @@
+{{ define "message"}}
+
+    {{ if .Message }}
+
+    <div class="centered is-centered">
+        <div class="message-list">
+                <div class="message -left">
+                <i class="nes-bcrikko"></i>
+
+                <div class="nes-balloon from-left">
+                    <p>{{ .Message }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{ end }}
+
+{{ end }}

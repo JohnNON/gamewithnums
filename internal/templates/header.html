@@ -1,0 +1,19 @@
+{{ define "header"}}
+
+<header class="">
+    <div class="container">
+        <div class="nav">
+            <a href="/index">Records</a>
+            {{ if .Login }}
+                <a href="/private/game">Game</a>
+                <a href="/private/statistic">Gamer's Statistic</a>
+                <a href="/logout">Logout</a>
+            {{ else }}
+                <a href="/login">Login</a>
+                <a href="/registration">Registration</a>
+            {{ end }}
+        </div>
+    </div>
+</header>
+
+{{ end }}

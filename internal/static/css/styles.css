@@ -1,0 +1,53 @@
+
+
+.game-field {
+    height: 300px;
+    overflow: auto;
+    margin: 0 auto;
+    margin-top: 10px;
+    position: relative;
+  }
+
+.centered {
+    max-width: 980px;
+    margin: 0 auto;
+    margin-top: 75px;
+}
+
+.sound {
+    position: fixed;
+    top: 75px;
+    left: 75px;
+}
+
+.table-center {
+  width: 900px;
+  margin: auto;
+  table-layout: auto;
+}
+
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9;
+    border-bottom: 4px solid #D3D3D3;
+    background-color: white;
+  }
+
+  header > .container {
+    display: flex;
+    align-items: baseline;
+    max-width: 980px;
+    margin: 0 auto;
+    padding-top: 1rem;
+    transition: all 0.2s ease;
+
+  }
+
+  header > .container > .nav {
+    margin-right: auto;
+    margin-left: auto;
+    align-items: center;
+  }
