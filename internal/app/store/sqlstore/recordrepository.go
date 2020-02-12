@@ -33,8 +33,8 @@ func (r *RecordRepository) FindByUserID(userID string, diff string) (*[]model.Re
 	if err := r.store.db.Select(
 		rc,
 		`SELECT DISTINCT difficulty, roundcount, gametime FROM records
-		WHERE userid = $1 AND difficulty = $2 AND
-		gametime = (SELECT MIN(gametime) FROM records) ORDER BY gametime, roundcount LIMIT 10`,
+		WHERE userid = $1 AND difficulty = $2
+		ORDER BY gametime, roundcount LIMIT 10`,
 		userID,
 		diff,
 	); err != nil || len(*rc) == 0 {
