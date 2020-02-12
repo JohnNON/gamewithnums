@@ -256,7 +256,6 @@ func (s *server) handleGameRoundCheck() http.HandlerFunc {
 		session.Values["user_game_rounds"] = round.(int) + 1
 
 		if err := s.sessionStore.Save(r, w, session); err != nil {
-			fmt.Println(123456789)
 			s.error(w, r, http.StatusInternalServerError, err)
 			return
 		}

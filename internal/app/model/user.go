@@ -9,6 +9,7 @@ import (
 // User - описание модели пользователя
 type User struct {
 	ID                int    `json:"id"`
+	Nickname          string `json:"nickname"`
 	Email             string `json:"email"`
 	Password          string `json:"password,omitempty"`
 	EncryptedPassword string `json:"-"`
@@ -18,6 +19,7 @@ type User struct {
 func (u *User) Validate() error {
 	return validation.ValidateStruct(
 		u,
+		validation.Field(&u.Nickname, validation.Required),
 		validation.Field(&u.Email, validation.Required, is.Email),
 		validation.Field(&u.Password, validation.By(requiredIf(u.EncryptedPassword == "")), validation.Length(8, 128)),
 	)

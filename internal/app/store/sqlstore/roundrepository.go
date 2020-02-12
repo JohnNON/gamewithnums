@@ -12,7 +12,7 @@ type RoundRepository struct {
 	store *Store
 }
 
-// Create - создаст место хранения user
+// Create - создаст запись round
 func (r *RoundRepository) Create(rn *model.Round) error {
 	if err := rn.Validate(); err != nil {
 		return err

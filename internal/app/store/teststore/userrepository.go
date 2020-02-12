@@ -49,3 +49,15 @@ func (r *UserRepository) FindByEmail(email string) (*model.User, error) {
 
 	return nil, store.ErrRecordNotFound
 }
+
+// FindByNickname - ищет user по значению поля email в тестовом хранилище
+func (r *UserRepository) FindByNickname(nickname string) (*model.User, error) {
+	for _, u := range r.users {
+		if u.Nickname == nickname {
+			u.Password = ""
+			return u, nil
+		}
+	}
+
+	return nil, store.ErrRecordNotFound
+}

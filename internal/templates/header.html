@@ -7,7 +7,7 @@
             <a href="/records">Рекорды</a>
             {{ if .Login }}
                 <a href="/private/game">Играть</a>
-                <a href="/private/statistic">Статистика пользователя</a>
+                <a href="/private/statistic">Статистика{{ if .User }} <span class="nes-text is-primary"> {{ .User }}</span> {{ end }}</a>
                 <a href="/logout">Выйти</a>
             {{ else }}
                 <a href="/login">Войти</a>

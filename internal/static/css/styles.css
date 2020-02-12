@@ -26,6 +26,10 @@
   table-layout: auto;
 }
 
+a:hover {
+  text-decoration: underline;
+}
+
 header {
     position: fixed;
     top: 0;

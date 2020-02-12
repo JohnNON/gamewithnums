@@ -161,6 +161,14 @@ func (s *server) handleIndexPage() http.HandlerFunc {
 			pageData["RecordsEvol"] = rcEvol
 		}
 
+		session, err := s.sessionStore.Get(r, sessionName)
+		if err == nil {
+			nickname, ok := session.Values["user_name"]
+			if ok && nickname != nil {
+				pageData["User"] = nickname.(string)
+			}
+		}
+
 		err = templateIndexPage.ExecuteTemplate(w, "base", pageData)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
@@ -184,7 +192,15 @@ func (s *server) handleRulePage() http.HandlerFunc {
 			pageData["Login"] = struct{}{}
 		}
 
-		err := templateRulePage.ExecuteTemplate(w, "base", pageData)
+		session, err := s.sessionStore.Get(r, sessionName)
+		if err == nil {
+			nickname, ok := session.Values["user_name"]
+			if ok && nickname != nil {
+				pageData["User"] = nickname.(string)
+			}
+		}
+
+		err = templateRulePage.ExecuteTemplate(w, "base", pageData)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -238,6 +254,7 @@ func (s *server) handleLogin() http.HandlerFunc {
 				}
 
 				session.Values["user_id"] = u.ID
+				session.Values["user_name"] = u.Nickname
 				s.clearGameSession(session)
 				if err := s.sessionStore.Save(r, w, session); err != nil {
 					s.error(w, r, http.StatusInternalServerError, err)
@@ -322,6 +339,7 @@ func (s *server) handleLogout() http.HandlerFunc {
 		}
 
 		session.Values["user_id"] = nil
+		session.Values["user_name"] = nil
 		s.clearGameSession(session)
 		if err := s.sessionStore.Save(r, w, session); err != nil {
 			s.error(w, r, http.StatusInternalServerError, err)
@@ -334,6 +352,7 @@ func (s *server) handleLogout() http.HandlerFunc {
 
 func (s *server) handleRegistration() http.HandlerFunc {
 	type registration struct {
+		Nickname       string
 		Email          string
 		Password       string
 		PasswordRepeat string
@@ -353,6 +372,8 @@ func (s *server) handleRegistration() http.HandlerFunc {
 	validateLogin := func(user *registration) error {
 		return validation.ValidateStruct(
 			user,
+			validation.Field(&user.Nickname,
+				validation.Required),
 			validation.Field(&user.Email,
 				validation.Required,
 				is.Email),
@@ -390,7 +411,7 @@ func (s *server) handleRegistration() http.HandlerFunc {
 
 				_, err := s.store.User().FindByEmail(reg.Email)
 				if err == nil {
-					session.Values["user_message"] = "email is registered already"
+					session.Values["user_message"] = fmt.Sprintf("%s - уже зарегистрирована", reg.Email)
 					if err := s.sessionStore.Save(r, w, session); err != nil {
 						s.error(w, r, http.StatusInternalServerError, err)
 						return
@@ -400,6 +421,7 @@ func (s *server) handleRegistration() http.HandlerFunc {
 				}
 				if reg.Password == reg.PasswordRepeat {
 					u := &model.User{
+						Nickname: reg.Nickname,
 						Email:    reg.Email,
 						Password: reg.Password,
 					}
@@ -470,10 +492,12 @@ func (s *server) handleGamePage() http.HandlerFunc {
 	templateGamePage = template.Must(renderTemplate("./internal/templates/game.html"))
 
 	return func(w http.ResponseWriter, r *http.Request) {
+		u := r.Context().Value(ctxKeyUser).(*model.User)
 
 		pageData := map[string]interface{}{
 			"Title":          "Game with nums - the Game!",
 			csrf.TemplateTag: csrf.TemplateField(r),
+			"User":           u.Nickname,
 		}
 
 		if s.checkForMenu(r) {
@@ -508,6 +532,7 @@ func (s *server) handleGameStatisticPage() http.HandlerFunc {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		u := r.Context().Value(ctxKeyUser).(*model.User)
+
 		id := strconv.Itoa(u.ID)
 		wg.Add(1)
 		go func() {
@@ -555,8 +580,9 @@ func (s *server) handleGameStatisticPage() http.HandlerFunc {
 		}
 
 		pageData := map[string]interface{}{
-			"Title":   "Game with nums - User's Stats!",
-			"Message": fmt.Sprintf("Результаты десяти лучших игр %s", u.Email),
+			"Title":   fmt.Sprintf("Game with nums - %s's Stats!", u.Nickname),
+			"Message": fmt.Sprintf("Результаты десяти лучших игр %s", u.Nickname),
+			"User":    u.Nickname,
 		}
 
 		if s.checkForMenu(r) {

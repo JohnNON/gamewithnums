@@ -10,16 +10,20 @@
             <form action="/registration" method="POST">
                 {{ .csrfField }}
                 <div class="nes-field is-inline">
+                    <label for="warning_field">Ваш псевдоним</label>
+                    <input type="text" name="nickname" pattern="[a-zA-Z0-9!*_,.&$^]+" class="nes-input">
+                </div>
+                <div class="nes-field is-inline">
                     <label for="warning_field">Почта</label>
                     <input type="email" name="email" class="nes-input">
                 </div>
                 <div class="nes-field is-inline">
                     <label for="warning_field">Пароль</label>
-                    <input type="password" name="password" class="nes-input">
+                    <input type="password" name="password" id="password" pattern="[a-zA-Z0-9!*_,.&$^]{8,}" class="nes-input">
                 </div>
                 <div class="nes-field is-inline">
                     <label for="warning_field">Повторите пароль</label>
-                    <input type="password" name="passwordrepeat" class="nes-input">
+                    <input type="password" name="passwordrepeat" id="passwordrepeat" class="nes-input" oninput="validpass();">
                 </div>
                 <button type="submit" class="nes-btn is-primary">Зарегистрироваться</button>
             </form>
@@ -27,5 +31,8 @@
         </div>
     </div>
 </main>
+
+<script src="/assets/static/js/valid.js">
+</script>
 
 {{ end }}

@@ -43,3 +43,19 @@ func TestUserRepository_FindByEmail(t *testing.T) {
 	assert.NotNil(t, u)
 
 }
+
+func TestUserRepository_FindByNickname(t *testing.T) {
+	s := teststore.New()
+	nickname := "user"
+	u := model.TestUser(t)
+	u.Nickname = nickname
+	_, err := s.User().FindByNickname(nickname)
+	assert.EqualError(t, err, store.ErrRecordNotFound.Error())
+
+	s.User().Create(u)
+
+	u, err = s.User().FindByNickname(nickname)
+	assert.NoError(t, err)
+	assert.NotNil(t, u)
+
+}

@@ -7,6 +7,7 @@ type UserRepository interface {
 	Create(*model.User) error
 	Find(int) (*model.User, error)
 	FindByEmail(string) (*model.User, error)
+	FindByNickname(string) (*model.User, error)
 }
 
 // RecordRepository - интерфейс, описывающий хранилище таблицы рекордов

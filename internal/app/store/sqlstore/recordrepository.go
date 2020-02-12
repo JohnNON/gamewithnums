@@ -12,7 +12,7 @@ type RecordRepository struct {
 	store *Store
 }
 
-// Create - создаст место хранения user
+// Create - создаст запись record
 func (r *RecordRepository) Create(rc *model.Record) error {
 	if err := rc.Validate(); err != nil {
 		return err
@@ -32,8 +32,9 @@ func (r *RecordRepository) FindByUserID(userID string, diff string) (*[]model.Re
 	rc := &[]model.Record{}
 	if err := r.store.db.Select(
 		rc,
-		`SELECT difficulty, roundcount, gametime FROM records
-		WHERE userid = $1 AND difficulty = $2 ORDER BY gametime, roundcount LIMIT 10`,
+		`SELECT DISTINCT difficulty, roundcount, gametime FROM records
+		WHERE userid = $1 AND difficulty = $2 AND
+		gametime = (SELECT MIN(gametime) FROM records) ORDER BY gametime, roundcount LIMIT 10`,
 		userID,
 		diff,
 	); err != nil || len(*rc) == 0 {
@@ -46,15 +47,17 @@ func (r *RecordRepository) FindByUserID(userID string, diff string) (*[]model.Re
 	return rc, nil
 }
 
-// GetAllRecords - ищет user по значению поля difficulty
+// GetAllRecords - ищет record по значению поля difficulty
 func (r *RecordRepository) GetAllRecords(diff string) (*[]model.Record, error) {
 	rc := &[]model.Record{}
 	if err := r.store.db.Select(
 		rc,
-		`SELECT records.difficulty, records.roundcount, records.gametime, users.email
+		`SELECT DISTINCT records.difficulty, records.roundcount, records.gametime, users.nickname
 		FROM records
 		JOIN users ON users.id=records.userid
-		WHERE difficulty = $1 ORDER BY gametime, roundcount LIMIT 10`,
+		WHERE records.difficulty = $1
+		AND records.gametime = (SELECT MIN(records.gametime) FROM records WHERE records.difficulty = $1 AND users.id=records.userid)
+		ORDER BY records.gametime, records.roundcount LIMIT 10`,
 		diff,
 	); err != nil || len(*rc) == 0 {
 		if err == sql.ErrNoRows || len(*rc) == 0 {
